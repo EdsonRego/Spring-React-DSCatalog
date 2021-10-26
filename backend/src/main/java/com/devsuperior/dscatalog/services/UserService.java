@@ -86,7 +86,7 @@ public class UserService {
 		
 		entity.setFirstName(dto.getFirstName());
 		entity.setLastName(dto.getLastName());
-		entity.setFirstName(dto.getEmail());
+		entity.setEmail(dto.getEmail());
 		
 		entity.getRoles().clear();
 		for(RoleDTO roleDTO : dto.getRoles()) {
