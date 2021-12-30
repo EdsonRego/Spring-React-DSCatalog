@@ -26,7 +26,7 @@ import com.devsuperior.dscatalog.entities.Role;
 import com.devsuperior.dscatalog.entities.User;
 import com.devsuperior.dscatalog.repositories.RoleRepository;
 import com.devsuperior.dscatalog.repositories.UserRepository;
-import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
+import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -44,11 +44,11 @@ public class UserService implements UserDetailsService {
 	private RoleRepository roleRepository;
 	
 	@Transactional(readOnly = true)
-	public Page<UserDTO> findAllPaged(Pageable pageable){
+	public Page<UserDTO> findAllPaged(Pageable pageable) {
 		Page<User> list = repository.findAll(pageable);
 		return list.map(x -> new UserDTO(x));
 	}
-	
+
 	@Transactional(readOnly = true)
 	public UserDTO findById(Long id) {
 		Optional<User> obj = repository.findById(id);
@@ -73,32 +73,32 @@ public class UserService implements UserDetailsService {
 			entity = repository.save(entity);
 			return new UserDTO(entity);
 		}
-		catch(EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id Not Found" + id);
-		}
+		catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}		
 	}
 
 	public void delete(Long id) {
 		try {
-		repository.deleteById(id);
+			repository.deleteById(id);
 		}
 		catch (EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException("Id Not Found" + id);
+			throw new ResourceNotFoundException("Id not found " + id);
 		}
 		catch (DataIntegrityViolationException e) {
-			throw new DataBaseException("Integrity Violation");
+			throw new DatabaseException("Integrity violation");
 		}
 	}
 	
 	private void copyDtoToEntity(UserDTO dto, User entity) {
-		
+
 		entity.setFirstName(dto.getFirstName());
 		entity.setLastName(dto.getLastName());
 		entity.setEmail(dto.getEmail());
 		
 		entity.getRoles().clear();
-		for(RoleDTO roleDTO : dto.getRoles()) {
-			Role role = roleRepository.getOne(roleDTO.getId());
+		for (RoleDTO roleDto : dto.getRoles()) {
+			Role role = roleRepository.getOne(roleDto.getId());
 			entity.getRoles().add(role);
 		}
 	}
@@ -107,11 +107,11 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		User user = repository.findByEmail(username);
-		if(user == null) {
-			logger.error("User Not Found: " + username);
-			throw new UsernameNotFoundException("Email Not Found");
+		if (user == null) {
+			logger.error("User not found: " + username);
+			throw new UsernameNotFoundException("Email not found");
 		}
-		logger.info("User Found: " + username);
+		logger.info("User found: " + username);
 		return user;
 	}
 }

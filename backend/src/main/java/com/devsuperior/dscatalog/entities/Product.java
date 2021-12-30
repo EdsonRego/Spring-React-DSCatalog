@@ -17,9 +17,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "tb_product")
-public class Product implements Serializable{
+public class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -36,7 +36,7 @@ public class Product implements Serializable{
 	@ManyToMany
 	@JoinTable(name = "tb_product_category",
 		joinColumns = @JoinColumn(name = "product_id"),
-		inverseJoinColumns = @JoinColumn(name = "category_id"))
+		inverseJoinColumns = @JoinColumn(name = "category_id"))	
 	Set<Category> categories = new HashSet<>();
 	
 	public Product() {
@@ -126,5 +126,5 @@ public class Product implements Serializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
+	}	
 }
